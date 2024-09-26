@@ -12,7 +12,7 @@ This repository contains the technical test for ESS system engineer position. It
 ## How to Use
 
 1. Clone the repository.
-2. Adapt the packer and terraform templates with your own project id, image output name, credentials file, etc.
+2. Adapt the packer and terraform templates with your own project ID, image output name, credentials file, etc.
 3. Ensure you have the necessary tools installed:
    - Terraform
    - Packer
@@ -39,3 +39,13 @@ This repository contains the technical test for ESS system engineer position. It
 
 3. **Puppet Configuration:**
    - Puppet should automatically run as part of the Packer-built image once the VMs are deployed, ensuring proper system configuration.
+
+
+## **Disclaimer**
+
+> **Note:**
+> - Only the Ubuntu Puppet configuration has been fully tested and works as expected.
+> - Windows Puppet configuration has been partially tested due to time constraints.
+> - macOS has not been tested at all, as I couldn't find a feasible way to deploy a VM with that OS.
+> - Packer configuration has been tested OK for both Ubuntu and partially for Windows due to lack of time.
+> - Terraform deployments work fine for both Ubuntu and Windows.
