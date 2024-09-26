@@ -1,0 +1,56 @@
+on:
+  push:
+    tags:
+      - 'v*'
+
+name: Release
+
+jobs:
+  run_prerelease_tasks:
+    runs-on: ubuntu-latest
+    name: Run tests
+    steps:
+      - uses: actions/checkout@v2
+      - name: Prepare environment
+        uses: newrelic/puppet-install/.github/actions/installation@main
+      - name: Run tests
+        uses: newrelic/puppet-install/.github/actions/tests@main
+      - name: Create release version
+        id: create_release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: ${{ github.ref }}
+          release_name: ${{ github.ref }}
+          draft: false
+          prerelease: false
+
+  push_to_forge:
+    runs-on: ubuntu-latest
+    name: publish module to forge.puppet.com
+    needs: run_prerelease_tasks
+    steps:
+      - name: Release puppet
+        uses: newrelic/puppet-install/.github/actions/release@main
+        env:
+          FORGE_API_KEY: ${{ secrets.FORGE_API_KEY }}
+
+  slack-notification:
+    runs-on: ubuntu-latest
+    name: Send Slack Release Notification
+    needs: push_to_forge
+    steps:
+      - uses: actions/checkout@v2
+      - name: Slack Notification
+        uses: rtCamp/action-slack-notify@v2
+        env:
+          SLACK_USERNAME: puppet-install
+          SLACK_MESSAGE: Pushed ${{ github.ref_name }} to forge.puppet.com
+          SLACK_ICON_EMOJI: ':github:'
+          SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK_RELEASES }}
+          SLACK_FOOTER: https://forge.puppet.com/modules/newrelic/newrelic_installer/readme
+
+
+
+

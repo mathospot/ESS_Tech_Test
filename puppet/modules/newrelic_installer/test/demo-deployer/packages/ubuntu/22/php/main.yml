@@ -1,0 +1,22 @@
+---
+- name: Install PHP and pre-reqs
+  apt:
+    pkg:
+      - libapache2-mod-php
+      - mysql-server
+      - mysql-client
+      - php-mysql
+    update_cache: yes
+  become: yes
+
+- template:
+    src: "{{ item }}"
+    dest: ~/files/
+    mode: 0755
+  with_fileglob:
+    - ../../../common/php/files/*
+  become: yes
+
+- shell:
+    cmd: ~/files/install-wordpress.sh
+  become: yes
