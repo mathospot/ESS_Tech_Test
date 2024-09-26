@@ -64,4 +64,25 @@ class windows {
     ensure => running,
     enable => true,
   }
+
+
+  ### Prometheus ###
+  class { 'prometheus':
+      version => '1.3.1',
+  }
+  service { 'node_exporter':
+      ensure => running,
+      enable => true,
+  }
+
+  # New Relic installation
+  class { 'newrelic_installer::install':
+    targets => ["infrastructure", "logs"],
+    environment_variables => {
+      "NEW_RELIC_API_KEY"          => $api_key,
+      "NEW_RELIC_ACCOUNT_ID"       => $account_id,
+      "NEW_RELIC_REGION"           => "EU",
+      "NEW_RELIC_APPLICATION_NAME" => "Apache macOS"
+    }
+  }
 }
